@@ -7,6 +7,7 @@
 - Los diálogos cerrados ya no se ofrecen al teclado ni a las tecnologías de asistencia.
 - Duplicar un adicional conserva automáticamente el borrador y elimina advertencias de serie de la captura anterior.
 - Eliminado el registro redundante del service worker; su administración queda en el módulo de plataforma.
+- Las actualizaciones recargan los recursos desde la red para no reutilizar archivos antiguos de la caché HTTP. El identificador de caché también cambia al modificar el generador del service worker.
 - Se conservan las claves de almacenamiento y la URL para mantener acceso a los datos existentes.
 
 ## Verificación realizada
@@ -39,3 +40,4 @@ No se verificaron cámara física, lector RFID físico, impresora, instalación 
 2. **Restauración con resumen y recuperación previa.** Mostrar cantidades antes de reemplazar el inventario y guardar un punto recuperable del estado anterior. Actualmente se valida el ZIP, pero la selección de un archivo válido inicia su restauración.
 3. **Directorio de auditores transportable.** Incluir los registros locales de personas en un respaldo opcional. Actualmente el ZIP conserva la autoría de los bienes, pero el directorio personalizado permanece en ese navegador.
 4. **Pruebas con archivos reales y equipos de trabajo.** Incorporar archivos anonimizados de formatos habituales y verificar cámara, escáner e impresión en los equipos donde se usará la aplicación.
+
