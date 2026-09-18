@@ -1,6 +1,6 @@
 {
-  "name": "inventario-parejas",
-  "version": "1.0.0",
+  "name": "control-de-inventarios",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
     "start": "node tools/serve.cjs",

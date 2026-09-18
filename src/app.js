@@ -1,5 +1,4 @@
 
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('Error SW:', err)); }); }
 
 const NOMBRES_AREAS = { "131100": "Dirección de Almacén e Inventarios", "131000": "Dirección de Almacén e Inventarios", "1": "Dirección General", "2": "Finanzas", "3": "Recursos Humanos", "4": "Operaciones", "5": "Sistemas", "CONTRATO": "Arrendamiento" };
 const defaultPerfilesMagicos = [ { regexStr: '^MZ01', desc: 'CPU', marca: 'LENOVO', modelo: 'THINK CENTRE M75s GEN 5', posesion: 'Arrendamiento' }, { regexStr: '^VR00', desc: 'MONITOR', marca: 'LENOVO', modelo: 'S22I-30', posesion: 'Arrendamiento' }, { regexStr: '^8SSD51', desc: 'TECLADO', marca: 'LENOVO', modelo: 'KU1601', posesion: 'Arrendamiento' }, { regexStr: '^8SSM51', desc: 'MOUSE', marca: 'LENOVO', modelo: 'MOJUUO', posesion: 'Arrendamiento' }, { regexStr: '^PF[A-Z0-9]{6}', desc: 'LAPTOP', marca: 'LENOVO', modelo: 'THINKPAD', posesion: 'Arrendamiento' }, { regexStr: '^12240', desc: 'REGULADOR DE VOLTAJE', marca: 'SMARTBITT', modelo: 'SBNB500', posesion: 'Arrendamiento' }, { regexStr: '^22WZ', desc: 'TELÉFONO', marca: 'AVAYA', modelo: 'VANTAGE 12', posesion: 'Cámara' }, { regexStr: '^17WZ[A-Z0-9]{8,}', desc: 'TELÉFONO', marca: 'AVAYA', modelo: '9611G', posesion: 'Cámara' } ];
@@ -254,8 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTeam() {
         document.getElementById('current-user-name').textContent = 'Ubicado por: ' + InventoryTeam.label(state.currentUser.name,state.currentUser.employeeNumber);
         document.getElementById('current-companion-name').textContent = 'Auxiliado por: ' + InventoryTeam.label(state.companion.name,state.companion.employeeNumber);
-        document.getElementById('header-auditor-name').textContent = state.currentUser.name;
-        document.getElementById('header-auditor-badge').classList.remove('hidden');
         document.getElementById('swap-team-btn').setAttribute('aria-checked', String(swapped));
     }
     document.getElementById('swap-team-btn').onclick = () => {
@@ -644,6 +641,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('input[name="personal"]').forEach(r => r.checked = (r.value === (i.personal || 'No')));
         toggleAdicFormFields('ad');
+        document.getElementById('serie-warning').classList.add('hidden');
+        captureAdditionalDraft();
 
         showToast('Datos clonados.', 'info'); document.getElementById('adicional-form').scrollIntoView({behavior: 'smooth', block: 'start'});
     };
@@ -1316,7 +1315,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showMain() {
         document.getElementById('team-page').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); renderTeam();
-        const auditorBadge = document.getElementById('header-auditor-badge'); if (auditorBadge && state.currentUser) { document.getElementById('header-auditor-name').textContent = state.currentUser.name; auditorBadge.classList.remove('hidden'); }
         const today=new Date();document.getElementById('rep-date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');document.getElementById('rep-year').value=today.getFullYear();
         renderBackupStatus();updateHeaderArea(); populateFilters(); renderDashboard(); changeTab('users'); updateDatalists(); setTimeout(() => { populateReportFilters(); toggleAdicFormFields('ad'); }, 1000);
     }

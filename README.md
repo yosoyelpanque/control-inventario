@@ -1,4 +1,4 @@
-# Inventario por parejas
+# Control de inventarios
 
 [Abrir aplicación](https://yosoyelpanque.github.io/inventario-parejas/)
 

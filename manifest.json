@@ -1,6 +1,6 @@
 {
-  "name": "Inventario por parejas",
-  "short_name": "Inventario",
+  "name": "Control de inventarios",
+  "short_name": "Control de inventarios",
   "description": "Sistema avanzado de control de Almacén e Inventarios con soporte Offline.",
   "start_url": "./index.html",
   "display": "standalone",
