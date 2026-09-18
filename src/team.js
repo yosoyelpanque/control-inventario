@@ -22,8 +22,8 @@
   });
   const clear = () => ({ubicadoPor:'', ubicadoPorNumero:'', auxiliadoPor:'', auxiliadoPorNumero:''});
   const savedAttribution = item => Object.fromEntries(Object.keys(clear()).map(key => [key, item[key] || '']));
-  const label = (name, number) => name ? name + (number ? ' · Empleado ' + number : '') : 'Sin registro';
-  const excel = item => ({'Ubicado Por':item.ubicadoPor || '', 'No. empleado - Ubicado por':item.ubicadoPorNumero || '', 'Auxiliado Por':item.auxiliadoPor || '', 'No. empleado - Auxiliado por':item.auxiliadoPorNumero || ''});
+  const label = name => name || 'Sin registro';
+  const excel = item => ({'Ubicado Por':item.ubicadoPor || '', 'Auxiliado Por':item.auxiliadoPor || ''});
   function remember(team) { sessionStorage.setItem(SESSION, JSON.stringify(pair(team.active, team.companion))); }
   function forget() { sessionStorage.removeItem(SESSION); }
   async function mount(open) {
@@ -33,41 +33,65 @@
       const custom = JSON.parse(localStorage.getItem(DIRECTORY) || '[]');
       for (const entry of custom) { const p = person(entry); if (!directory.some(x => x.employeeNumber === p.employeeNumber)) directory.push(p); }
     } catch { status.textContent = 'No se pudo recuperar el directorio local. Puedes registrar de nuevo a las personas.'; }
+    const confirmed = {active:null, companion:null};
+    const normalize = value => value.trim().replace(/^0+/, '') || '0';
+    function lookup(role) {
+      const value = $('team-'+role).value.trim();
+      return /^\d{1,20}$/.test(value) ? directory.find(p => normalize(p.employeeNumber) === normalize(value)) : null;
+    }
     function render() {
-      for (const id of ['team-active','team-companion']) {
-        const select = $(id), previous = select.value;
-        select.replaceChildren(new Option('Selecciona una persona', ''));
-        for (const p of [...directory].sort((a,b) => a.name.localeCompare(b.name, 'es'))) select.add(new Option(label(p.name,p.employeeNumber), p.employeeNumber));
-        select.value = previous;
+      $('team-companion').disabled = !confirmed.active;
+      for (const role of ['active','companion']) {
+        const candidate = lookup(role), name = $('team-'+role+'-name'), button = $('team-'+role+'-accept');
+        const duplicate = role === 'companion' && candidate && confirmed.active && normalize(candidate.employeeNumber) === normalize(confirmed.active.employeeNumber);
+        name.textContent = duplicate ? 'El compañero debe ser otra persona.' : candidate ? candidate.name : $('team-'+role).value ? 'Número de empleado no encontrado.' : '';
+        button.hidden = !candidate || !!duplicate || (role === 'companion' && !confirmed.active);
+        button.disabled = !!confirmed[role];
+        button.textContent = confirmed[role] ? 'Aceptado ✓' : 'Aceptar';
       }
-      excludeActive();
+      $('team-start').disabled = !confirmed.active || !confirmed.companion;
     }
-    function excludeActive() {
-      const active = $('team-active').value, companion = $('team-companion');
-      if (companion.value === active) companion.value = '';
-      for (const option of companion.options) option.disabled = !!active && option.value === active;
+    function invalidate(role) {
+      confirmed[role] = null;
+      if (role === 'active') confirmed.companion = null;
+      render();
     }
-    $('team-active').onchange = excludeActive;
+    function accept(role) {
+      const candidate = lookup(role);
+      if (!candidate || (role === 'companion' && !confirmed.active)) return;
+      try {
+        if (role === 'companion') pair(confirmed.active,candidate);
+        confirmed[role] = candidate; status.textContent = ''; render();
+        $(role === 'active' ? 'team-companion' : 'team-start').focus();
+      } catch(error) { status.textContent = error.message; }
+    }
+    for (const role of ['active','companion']) {
+      $('team-'+role).oninput = () => invalidate(role);
+      $('team-'+role+'-accept').onclick = () => accept(role);
+      $('team-'+role).onkeydown = event => { if(event.key === 'Enter') { event.preventDefault(); accept(role); } };
+    }
     $('register-person').onsubmit = event => {
       event.preventDefault();
       try {
         const entry = person({name:$('person-name').value, employeeNumber:$('person-number').value});
-        if (directory.some(p => p.employeeNumber.replace(/^0+/,'') === entry.employeeNumber.replace(/^0+/,''))) throw Error('Ese número de empleado ya está registrado. Selecciónalo en la lista.');
+        if (directory.some(p => normalize(p.employeeNumber) === normalize(entry.employeeNumber))) throw Error('Ese número de empleado ya está registrado. Escríbelo para confirmar el nombre.');
         const next = [...directory,entry];
         localStorage.setItem(DIRECTORY,JSON.stringify(next));
-        directory = next; render();
-        $( $('register-target').value === 'active' ? 'team-active' : 'team-companion').value = entry.employeeNumber;
-        excludeActive(); event.target.reset(); $('register-details').open = false;
-        status.textContent = 'Persona registrada en este navegador.';
+        directory = next;
+        const role = $('register-target').value;
+        $('team-'+role).value = entry.employeeNumber;
+        invalidate(role); event.target.reset(); $('register-details').open = false;
+        status.textContent = 'Persona registrada. Confirma su nombre con Aceptar.';
       } catch(error) { status.textContent = error.message; }
     };
     $('team-form').onsubmit = async event => {
       event.preventDefault(); $('team-start').disabled = true;
       try {
-        const team = pair(directory.find(p => p.employeeNumber === $('team-active').value), directory.find(p => p.employeeNumber === $('team-companion').value));
+        if (!confirmed.active || !confirmed.companion) throw Error('Confirma a ambas personas con Aceptar.');
+        const team = pair(confirmed.active,confirmed.companion);
         remember(team); await open(team);
       } catch(error) { forget(); status.textContent = 'No se pudo iniciar: ' + error.message; }
-      finally { $('team-start').disabled = false; }
+      finally { render(); }
     };
     render();
     try {

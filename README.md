@@ -6,9 +6,9 @@ Aplicación estática de verificación de bienes, basada en [Inventario Pro](htt
 
 ## Trabajo en pareja
 
-1. Selecciona tu nombre y número de empleado. Si no apareces, registra una persona en el directorio local.
-2. Elige a un compañero distinto y comienza la verificación.
-3. Cada bien ubicado, reetiquetado o adicional nuevo guarda **Ubicado por** y **Auxiliado por**, con sus números de empleado.
+1. Escribe tu número de empleado, revisa el nombre y pulsa Aceptar. Si no está registrado, registra una persona en el directorio local.
+2. Escribe el número de un compañero distinto, confirma su nombre con Aceptar y comienza la verificación.
+3. Cada bien ubicado, reetiquetado o adicional nuevo guarda **Ubicado por** y **Auxiliado por**, solo con sus nombres en pantalla y en Excel.
 4. Usa **Intercambiar** junto a los nombres para cambiar quién captura. Solo afecta las verificaciones siguientes; conserva los registros anteriores, el inventario, el resguardante activo y los borradores.
 5. **Cambiar pareja** vuelve al selector sin borrar el inventario.
 

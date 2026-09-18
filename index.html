@@ -101,15 +101,17 @@
             <img src="logo.png" alt="Inventario" class="team-logo">
             <p class="team-eyebrow">VERIFICACIÓN DE BIENES · EN PAREJA</p>
             <h1>Inventario por parejas</h1>
-            <p>Selecciona quién captura y quién le auxilia. Pueden intercambiar funciones durante el recorrido.</p>
+            <p>Escribe el número de empleado de cada persona y confirma su nombre. Pueden intercambiar funciones durante el recorrido.</p>
             <form id="team-form">
                 <label for="team-active">¿Quién lleva la laptop? <span>Ubicado por</span></label>
-                <select id="team-active" required></select>
-                <label for="team-companion">Elige a tu compañero <span>Auxiliado por</span></label>
-                <select id="team-companion" required></select>
-                <button id="team-start" type="submit">Comenzar verificación <span aria-hidden="true">→</span></button>
+                <input id="team-active" required inputmode="numeric" pattern="[0-9]{1,20}" maxlength="20" autocomplete="off" placeholder="Número de empleado" aria-describedby="team-active-name">
+                <div class="team-confirmation"><p id="team-active-name" role="status"></p><button id="team-active-accept" type="button" hidden>Aceptar</button></div>
+                <label for="team-companion">¿Quién te auxilia? <span>Auxiliado por</span></label>
+                <input id="team-companion" required inputmode="numeric" pattern="[0-9]{1,20}" maxlength="20" autocomplete="off" placeholder="Número de empleado del compañero" aria-describedby="team-companion-name" disabled>
+                <div class="team-confirmation"><p id="team-companion-name" role="status"></p><button id="team-companion-accept" type="button" hidden>Aceptar</button></div>
+                <button id="team-start" type="submit" disabled>Comenzar verificación <span aria-hidden="true">→</span></button>
             </form>
-            <details id="register-details"><summary>¿No apareces en la lista? Registrar persona</summary>
+            <details id="register-details"><summary>¿Tu número no está registrado? Registrar persona</summary>
                 <form id="register-person">
                     <label for="person-name">Nombre completo</label><input id="person-name" required minlength="3" maxlength="120" autocomplete="name">
                     <label for="person-number">Número de empleado</label><input id="person-number" required pattern="[0-9]{1,20}" maxlength="20" inputmode="numeric">

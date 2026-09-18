@@ -22,7 +22,8 @@ test('respaldo conserva atribución, excluye pareja activa y no inventa compañe
   const saved=D.clean({inventory:[item],currentUser:active,companion});
   assert.deepEqual(saved,{inventory:[item]});
   assert.equal(T.savedAttribution({ubicadoPor:'Anterior'}).auxiliadoPor,'');
-  assert.equal(T.excel(item)['No. empleado - Ubicado por'],'00123');
+  assert.deepEqual(Object.keys(T.excel(item)),['Ubicado Por','Auxiliado Por']);
+  assert.equal(T.label(active.name,active.employeeNumber),'Persona Uno');
   assert.equal(T.excel(item)['Auxiliado Por'],'Persona Dos');
   assert.ok(Object.values(T.clear()).every(v=>v===''));
 });
