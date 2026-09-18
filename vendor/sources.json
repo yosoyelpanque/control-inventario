@@ -1,0 +1,62 @@
+[
+  {
+    "file": "tailwind.js",
+    "url": "https://cdn.tailwindcss.com/3.4.17",
+    "bytes": 407279,
+    "sha256": "176e894661aa9cdc9a5cba6c720044cbbf7b8bd80d1c9a142a7c24b1b6c50d15"
+  },
+  {
+    "file": "xlsx.js",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
+    "bytes": 881727,
+    "sha256": "c9506197caf809a075b6dee1da0d36fb19da7158ffe8a88e7b0c96c5d8623c99"
+  },
+  {
+    "file": "qrcode.js",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
+    "bytes": 19927,
+    "sha256": "c541ef06327885a8415bca8df6071e14189b4855336def4f36db54bde8484f36"
+  },
+  {
+    "file": "html5-qrcode.js",
+    "url": "https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js",
+    "bytes": 375364,
+    "sha256": "660b12437b1d747e3e68b8be0685c08cb728140110ad213f167b14b66f8b1d8e"
+  },
+  {
+    "file": "jszip.js",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js",
+    "bytes": 97630,
+    "sha256": "acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e"
+  },
+  {
+    "file": "fontawesome/css/all.min.css",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
+    "bytes": 102641,
+    "sha256": "c22cfb6520a7fdbb738632834019acf47c78b1279462c0eb4cb83bae83ecb5a7"
+  },
+  {
+    "file": "fontawesome/webfonts/fa-solid-900.woff2",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2",
+    "bytes": 156496,
+    "sha256": "9fc85f3a4544ab0d570c7f8f9bbb88db8d92c359b2707580ea8b07c75673eae2"
+  },
+  {
+    "file": "fontawesome/webfonts/fa-regular-400.woff2",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-regular-400.woff2",
+    "bytes": 25452,
+    "sha256": "2bccecf0bc7e96cd5ce4003abeb3ae9ee4a3d19158c4e6edfd2df32d2f0d5721"
+  },
+  {
+    "file": "fontawesome/webfonts/fa-brands-400.woff2",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-brands-400.woff2",
+    "bytes": 117372,
+    "sha256": "3a8924cd5203a28628716aedb5cef0943da4c3b44e3ffcee90ab06387b41c490"
+  },
+  {
+    "file": "fontawesome/webfonts/fa-v4compatibility.woff2",
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-v4compatibility.woff2",
+    "bytes": 4792,
+    "sha256": "4d4a2d7fd1c6684845cb174fdd7fc073bd64cb741286fb247f8b76c2b7b852c4"
+  }
+]

@@ -1,0 +1,11 @@
+node_modules/
+work/
+outputs/
+.env
+.env.*
+*.zip
+*.xls
+*.xlsx
+*.xlsm
+ADICIONALES.md
+AVANCE-SISTEMA.md

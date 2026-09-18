@@ -1,0 +1,20 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Actualizar Inventario</title>
+<body style="font-family:system-ui;max-width:560px;margin:80px auto;padding:24px;background:#f8fafc;color:#312e81"><h1>Actualizar Inventario</h1><p>Se actualizarán los archivos de la aplicación. El inventario y las fotografías guardadas se conservan.</p><button id="update" style="padding:14px 20px;background:#4338ca;color:white;border:0;border-radius:10px;font-size:17px">Actualizar y volver</button><p id="status" role="status"></p>
+<script>
+document.getElementById('update').onclick=async()=>{
+ const status=document.getElementById('status');status.textContent='Descargando la versión actual…';
+ try{
+  const registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+  await registration.update();
+  if(registration.installing)await new Promise((resolve,reject)=>{const worker=registration.installing;worker.addEventListener('statechange',()=>{if(worker.state==='installed'||worker.state==='activated')resolve();if(worker.state==='redundant')reject(Error('No se pudo instalar la actualización'));});});
+  if(registration.waiting){
+   await new Promise((resolve,reject)=>{
+    const timeout=setTimeout(()=>reject(Error('La actualización sigue pendiente. Vuelve a intentarlo.')),15000);
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{clearTimeout(timeout);resolve();},{once:true});
+    registration.waiting.postMessage({type:'ACTIVATE_UPDATE'});
+   });
+  }
+  location.replace('./index.html');
+ }catch(error){status.textContent=error.message;}
+};
+</script></body></html>
