@@ -250,3 +250,5 @@
 #report-search-results button{text-align:left;padding:12px 16px;border:1px solid #e2e8f0;border-radius:10px;color:#3730a3;background:#f8fafc;font-size:15px;overflow-wrap:anywhere;min-height:44px}
 #report-search-results button:hover{background:#eef2ff;border-color:#a5b4fc}
 #report-search-results button:focus-visible{outline:3px solid #818cf8;outline-offset:2px}
+
+.team-card #team-back,.team-card #team-solo{background:transparent;color:#4338ca;padding:6px 0;font-size:13px;text-align:left;width:fit-content}.team-card #team-back{margin-bottom:12px}.team-card #team-back[hidden],.team-swap[hidden]{display:none}

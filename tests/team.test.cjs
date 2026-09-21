@@ -1,6 +1,13 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const T = require('../src/team.js'), D = require('../src/data.js'), A = require('../src/additional-rules.js');
 const active = {name:'Persona Uno',employeeNumber:'00123'}, companion = {name:'Persona Dos',employeeNumber:'00456'};
+test('un auditor conserva autoría y deja vacío auxiliado por, incluso en Excel',()=>{
+ const team=T.pair(active,null);assert.equal(team.companion,null);
+ assert.deepEqual(T.swap(team),team);
+ const attribution=T.attribution({currentUser:active,companion:null});
+ assert.equal(attribution.ubicadoPor,'Persona Uno');assert.equal(attribution.auxiliadoPor,'');
+ assert.equal(T.excel(attribution)['Auxiliado Por'],'');
+});
 test('catálogo portable valida identidades y rechaza duplicados con ceros iniciales', () => {
   assert.deepEqual(T.validateDirectory([active, companion]), [active, companion]);
   assert.throws(() => T.validateDirectory({}));

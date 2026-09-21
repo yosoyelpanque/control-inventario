@@ -259,16 +259,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function startCamera() { stopCamera(); try { cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); const videoEl = document.getElementById('camera-stream'); videoEl.srcObject = cameraStream; videoEl.setAttribute('playsinline', true); await videoEl.play(); } catch (err) { showToast('Error de cámara.', 'error'); } }
     function stopCamera() { if(cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; } const videoEl = document.getElementById('camera-stream'); if(videoEl) { videoEl.pause(); videoEl.srcObject = null; } }
     document.getElementById('change-team-btn').onclick = async () => {
-        try { await photoDB.flush(); InventoryTeam.forget(); location.reload(); }
+        try {
+            await photoDB.flush();
+            InventoryTeam.edit({active:state.currentUser,companion:state.companion});
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('team-page').classList.remove('hidden');
+            document.getElementById('team-back').hidden=false;
+            document.getElementById('team-back').focus();
+        }
         catch { showToast('No se pudo guardar. Conserva esta pantalla abierta.', 'error'); }
+    };
+    document.getElementById('team-back').onclick=()=>{
+        document.getElementById('team-page').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+        document.getElementById('change-team-btn').focus();
     };
     let swapped = false;
     function renderTeam() {
         document.getElementById('current-user-name').textContent = 'Ubicado por: ' + InventoryTeam.label(state.currentUser.name,state.currentUser.employeeNumber);
-        document.getElementById('current-companion-name').textContent = 'Auxiliado por: ' + InventoryTeam.label(state.companion.name,state.companion.employeeNumber);
+        document.getElementById('current-companion-name').textContent = state.companion ? 'Auxiliado por: ' + InventoryTeam.label(state.companion.name) : 'Sin compañero';
+        document.getElementById('swap-team-btn').hidden=!state.companion;
         document.getElementById('swap-team-btn').setAttribute('aria-checked', String(swapped));
     }
     document.getElementById('swap-team-btn').onclick = () => {
+        if(!state.companion)return;
         if(document.querySelector('.modal-overlay.show')) return showToast('Termina o cierra el formulario antes de intercambiar.', 'warning');
         try {
             const team = InventoryTeam.swap({active:state.currentUser,companion:state.companion});
@@ -1339,6 +1353,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.modal-overlay .fa-xmark, button[id$="-cancel-btn"], button[id$="-close-btn"]').forEach(b => b.onclick = e => { e.target.closest('.modal-overlay').classList.remove('show'); stopCamera(); if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop().catch(err => {}); } focusSearch(); });
 
     async function openWorkspace(team) {
+        if(state.loggedIn){
+            state.currentUser=team.active;state.companion=team.companion;swapped=false;
+            document.getElementById('team-page').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');renderTeam();return;
+        }
         await photoDB.init('parejas-local-v1');stateHistory=await photoDB.getItem('appData','changeHistory')||[];
         drafts=await photoDB.getItem('appData','captureDrafts')||{additional:{},notes:{}};
         const stored = await photoDB.getItem('appData', 'mainState');

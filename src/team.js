@@ -9,11 +9,11 @@
     return {employeeNumber, name};
   };
   function pair(active, companion) {
-    active = person(active); companion = person(companion);
-    if (active.employeeNumber.replace(/^0+/, '') === companion.employeeNumber.replace(/^0+/, '')) throw Error('Elige a dos personas distintas.');
+    active = person(active); companion = companion == null ? null : person(companion);
+    if (companion && active.employeeNumber.replace(/^0+/, '') === companion.employeeNumber.replace(/^0+/, '')) throw Error('Elige a dos personas distintas.');
     return {active, companion};
   }
-  const swap = team => pair(team.companion, team.active);
+  const swap = team => team.companion ? pair(team.companion, team.active) : pair(team.active,null);
   const attribution = state => ({
     ubicadoPor: state.currentUser?.name || '',
     ubicadoPorNumero: state.currentUser?.employeeNumber || '',
@@ -65,7 +65,7 @@
         button.disabled = !!confirmed[role];
         button.textContent = confirmed[role] ? 'Aceptado ✓' : 'Aceptar';
       }
-      $('team-start').disabled = !confirmed.active || !confirmed.companion;
+      $('team-start').disabled = !confirmed.active || (!!$('team-companion').value.trim() && !confirmed.companion);
     }
     function invalidate(role) {
       confirmed[role] = null;
@@ -86,6 +86,14 @@
       $('team-'+role+'-accept').onclick = () => accept(role);
       $('team-'+role).onkeydown = event => { if(event.key === 'Enter') { event.preventDefault(); accept(role); } };
     }
+    root.InventoryTeam.edit = team => {
+      const current = pair(team.active,team.companion);
+      for (const role of ['active','companion']) {
+        confirmed[role]=current[role];$('team-'+role).value=current[role]?.employeeNumber||'';
+      }
+      status.textContent='';render();
+    };
+    $('team-solo').onclick=()=>{$('team-companion').value='';invalidate('companion');};
     $('register-person').onsubmit = async event => {
       event.preventDefault(); const form = event.target, button = form.querySelector('button'); button.disabled = true;
       try {
@@ -104,10 +112,10 @@
     $('team-form').onsubmit = async event => {
       event.preventDefault(); $('team-start').disabled = true;
       try {
-        if (!confirmed.active || !confirmed.companion) throw Error('Confirma a ambas personas con Aceptar.');
-        const team = pair(confirmed.active,confirmed.companion);
-        remember(team); await open(team);
-      } catch(error) { forget(); status.textContent = 'No se pudo iniciar: ' + error.message; }
+        if (!confirmed.active || ($('team-companion').value.trim() && !confirmed.companion)) throw Error('Confirma el nombre con Aceptar o deja vacío el compañero para trabajar solo.');
+        const team = pair(confirmed.active,$('team-companion').value.trim()?confirmed.companion:null);
+        await open(team); remember(team);
+      } catch(error) { status.textContent = 'No se pudo iniciar: ' + error.message; }
       finally { render(); }
     };
     render();

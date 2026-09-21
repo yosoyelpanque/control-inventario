@@ -53,3 +53,7 @@ Pendiente: pruebas con archivos anonimizados reales y cámara, lector e impresor
 - Limpieza: retiradas funciones antiguas getTipoBien/getProcedencia y variables sin uso de revisión y reportes. La búsqueda se centraliza en un módulo probado. Se conserva la compatibilidad del formato de datos.
 - Auditoría: sintaxis de todos los módulos propios, referencias a recursos, IDs HTML duplicados y búsqueda de restos de autenticación y depuración. Las cuatro referencias a datalist se crean dinámicamente y son válidas. No se modificaron librerías de terceros.
 - Pruebas: 31 unitarias correctas, una omitida por ausencia de archivos originales. Regresión de navegador y nuevas búsquedas correctas en Edge, escritorio 1440 × 1000 y móvil 390 × 844, sin errores de consola. La revisión no garantiza ausencia de fallos en combinaciones no probadas ni reemplaza pruebas con equipos físicos.
+
+## Auditor individual y regreso — versión 1.2.1
+
+Compañero opcional: dejar vacío o pulsar Sin compañero. Los nuevos registros y Excel conservan Auxiliado por vacío; el intercambio se oculta. Cambiar pareja abre la selección con los auditores actuales y Regresar vuelve a la misma pestaña sin aplicar ediciones ni recargar. Se verifica sesión individual tras recarga, captura, regreso con cambios descartados, vuelta a pareja e intercambio. 32 pruebas unitarias correctas, una omitida por archivos externos ausentes; regresión de navegador sin errores.

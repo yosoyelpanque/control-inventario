@@ -112,17 +112,19 @@
     <div id="app-container" inert class="min-h-screen p-2 md:p-4 bg-gray-100">
 
         <section id="team-page" class="team-card">
+            <button id="team-back" type="button" hidden>← Regresar al inventario</button>
             <img src="logo.png" alt="Inventario" class="team-logo">
-            <p class="team-eyebrow">VERIFICACIÓN DE BIENES · EN PAREJA</p>
+            <p class="team-eyebrow">VERIFICACIÓN DE BIENES</p>
             <h1>Control de inventarios</h1>
-            <p>Escribe el número de empleado de cada persona y confirma su nombre. Pueden intercambiar funciones durante el recorrido.</p>
+            <p>Confirma tu número de empleado. Puedes trabajar solo o agregar un compañero e intercambiar funciones durante el recorrido.</p>
             <form id="team-form">
                 <label for="team-active">¿Quién lleva la laptop? <span>Ubicado por</span></label>
                 <input id="team-active" required inputmode="numeric" pattern="[0-9]{1,20}" maxlength="20" autocomplete="off" placeholder="Número de empleado" aria-describedby="team-active-name">
                 <div class="team-confirmation"><p id="team-active-name" role="status"></p><button id="team-active-accept" type="button" hidden>Aceptar</button></div>
-                <label for="team-companion">¿Quién te auxilia? <span>Auxiliado por</span></label>
-                <input id="team-companion" required inputmode="numeric" pattern="[0-9]{1,20}" maxlength="20" autocomplete="off" placeholder="Número de empleado del compañero" aria-describedby="team-companion-name" disabled>
+                <label for="team-companion">¿Quién te auxilia? <span>Opcional · Déjalo vacío para trabajar solo</span></label>
+                <input id="team-companion" inputmode="numeric" pattern="[0-9]{1,20}" maxlength="20" autocomplete="off" placeholder="Número de empleado del compañero" aria-describedby="team-companion-name" disabled>
                 <div class="team-confirmation"><p id="team-companion-name" role="status"></p><button id="team-companion-accept" type="button" hidden>Aceptar</button></div>
+                <button id="team-solo" type="button">Sin compañero</button>
                 <button id="team-start" type="submit" disabled>Comenzar verificación <span aria-hidden="true">→</span></button>
             </form>
             <details id="register-details"><summary>¿Tu número no está registrado? Registrar persona</summary>
