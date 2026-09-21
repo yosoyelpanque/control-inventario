@@ -1,8 +1,6 @@
 (function(root){
  'use strict';
  const text=v=>String(v??'').trim();
- const serial=v=>text(v).toUpperCase();
- const emptySeries=new Set(['','S/N','SN','SIN SERIE','SIN NUMERO DE SERIE','SIN NÚMERO DE SERIE','NO APLICA','N/A','NA','-','0']);
  function review(state,area='all'){
   const users=state.resguardantes||[];
   function owner(item,additional){if(additional&&item.resguardanteId)return users.find(u=>u.id===item.resguardanteId);const matches=users.filter(u=>u.name===(additional?item.usuario:item['NOMBRE DE USUARIO']));return matches.length===1?matches[0]:null;}

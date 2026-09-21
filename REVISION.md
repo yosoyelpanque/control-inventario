@@ -45,3 +45,11 @@ No se verificaron cámara física, lector RFID físico, impresora, instalación 
 Validación: 29 pruebas unitarias correctas y una omitida por archivos originales ausentes. Edge/Playwright en 1440 × 1000 y 390 × 844: bloqueo entre pestañas, apertura tras cierre, cancelación, restauración, recuperación, fallo de escritura simulado sin pérdida, ZIP antiguo y catálogo inválido. Sin errores de consola. Se revisaron distribución, tipografía, contraste, botones visibles y adaptación móvil. También pasó la regresión de captura, Excel, reportes, notas y RFID.
 
 Pendiente: pruebas con archivos anonimizados reales y cámara, lector e impresora físicos. La protección entre pestañas requiere actualizar todas las ventanas antiguas; no sincroniza equipos ni perfiles de navegador distintos.
+
+## Búsqueda y limpieza — versión 1.2.0
+
+- Notas: búsqueda en vivo por texto, clave, descripción, usuario y serie; tolera acentos y mayúsculas. Activas y archivadas se filtran por separado. Seleccionar e imprimir se limitan a las coincidencias de todas las páginas.
+- Reportes: opciones por tipo, área y resguardante conforme se escribe; selección abre la vista previa con los filtros correspondientes. Se muestran hasta 40 opciones para mantener la lista manejable. No es un archivo histórico de PDF; busca los reportes generables con los datos actuales.
+- Limpieza: retiradas funciones antiguas getTipoBien/getProcedencia y variables sin uso de revisión y reportes. La búsqueda se centraliza en un módulo probado. Se conserva la compatibilidad del formato de datos.
+- Auditoría: sintaxis de todos los módulos propios, referencias a recursos, IDs HTML duplicados y búsqueda de restos de autenticación y depuración. Las cuatro referencias a datalist se crean dinámicamente y son válidas. No se modificaron librerías de terceros.
+- Pruebas: 31 unitarias correctas, una omitida por ausencia de archivos originales. Regresión de navegador y nuevas búsquedas correctas en Edge, escritorio 1440 × 1000 y móvil 390 × 844, sin errores de consola. La revisión no garantiza ausencia de fallos en combinaciones no probadas ni reemplaza pruebas con equipos físicos.

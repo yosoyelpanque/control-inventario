@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-    let state = { loggedIn: false, currentUser: null, companion: null, inventory: [], additionalItems: [], resguardantes: [], activeResguardante: null, locations: {}, areas: [], areaNames: {}, responsablesList: [], additionalPhotos: {}, locationPhotos: {}, notes: {}, archivedNotes: {}, photos: {}, userPhotos: {}, serialNumberCache: new Set(), suggestedNames: [], perfilesMagicos: [] };
+    let state = { loggedIn: false, currentUser: null, companion: null, inventory: [], additionalItems: [], resguardantes: [], activeResguardante: null, locations: {}, areas: [], areaNames: {}, responsablesList: [], additionalPhotos: {}, locationPhotos: {}, notes: {}, archivedNotes: {}, photos: {}, userPhotos: {}, suggestedNames: [], perfilesMagicos: [] };
     let stateHistory = []; let lastSelectedEdificio = 'EDIF. A'; let lastSelectedPiso = 'PLANTA BAJA'; let tempUserLocations = []; let tempUserLocationDetails = {}; let searchHistory = []; let cameraStream = null; let html5QrCode = null;
 
     function cleanAreaName(areaId, rawName) {
@@ -397,8 +397,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (tab === 'users') { globalSearch.placeholder = 'Buscar usuario...'; globalSearch.disabled = false; invActions.classList.add('hidden'); }
         else if (tab === 'inventory') { globalSearch.placeholder = 'CLAVE, serie o desc...'; globalSearch.disabled = false; invActions.classList.remove('hidden'); }
         else if (tab === 'adicionales') { globalSearch.placeholder = 'Buscar adicional...'; globalSearch.disabled = false; invActions.classList.add('hidden'); }
-        else if (tab === 'notas') { globalSearch.placeholder = 'Buscar nota...'; globalSearch.disabled = true; invActions.classList.add('hidden'); renderNotasTab(); }
-        else if (tab === 'reportes') { globalSearch.placeholder = 'No disponible aquí'; globalSearch.disabled = true; invActions.classList.add('hidden'); populateReportFilters();populateReviewAreas(); }
+        else if (tab === 'notas') { globalSearch.placeholder = 'Nota, clave o descripción...'; globalSearch.disabled = false; window.currentNotesPage=1; invActions.classList.add('hidden'); renderNotasTab(); }
+        else if (tab === 'reportes') { globalSearch.placeholder = 'Reporte, área o resguardante...'; globalSearch.disabled = false; invActions.classList.add('hidden'); populateReportFilters();populateReviewAreas();renderReportSearch(); }
         else if (tab === 'settings') { globalSearch.placeholder = 'No disponible aquí'; globalSearch.disabled = true; invActions.classList.add('hidden'); renderResponsablesSettings(); renderLoadedListings(); renderRecoveryPoints(); renderMagicProfiles();renderSessionHistory(); }
         updateBanner(); if(tab==='inventory') filterAndRenderInventory(); if(tab==='users') {renderUsers();populateTransferUsers();} if(tab==='adicionales') { populateFilters(); renderAdicionales(); toggleAdicFormFields('ad'); document.getElementById('ad-serie').focus(); } else focusSearch();
     }
@@ -409,6 +409,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const activeTab = document.querySelector('.tab-btn.active').dataset.tab; const term = e.target.value.trim().toUpperCase();
         if (activeTab === 'users') renderUsers();
         else if (activeTab === 'inventory') { const exactMatchInv = state.inventory.find(i => String(i['CLAVE UNICA']).toUpperCase() === term); const exactMatchAdic = state.additionalItems.find(a => String(a.claveAsignada).toUpperCase() === term); if (term !== '') { if (exactMatchInv) showInvDetail(exactMatchInv['CLAVE UNICA']); else if (exactMatchAdic) showAdicDetail(exactMatchAdic.id); } currentPage = 1; filterAndRenderInventory(); } else if (activeTab === 'adicionales') renderAdicionales();
+        else if(activeTab==='notas'){window.currentNotesPage=1;selectedNotes.clear();renderNotasTab();}
+        else if(activeTab==='reportes')renderReportSearch();
     });
 
     function renderDashboard() { document.getElementById('total-items').textContent = state.inventory.length; document.getElementById('located-items').textContent = state.inventory.filter(i=>i.UBICADO==='SI').length; document.getElementById('pending-items').textContent = state.inventory.filter(i=>i.UBICADO!=='SI').length; updateHeaderArea(); }
@@ -807,15 +809,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('filter-notas-archived').className = !window.viewArchivedNotes ? "px-4 py-2 font-bold border-b-4 border-transparent text-gray-500 hover:text-gray-700" : "px-4 py-2 font-bold border-b-4 border-indigo-500 text-indigo-700";
     }
 
+    function filteredNoteKeys(){
+        const query=document.querySelector('.tab-btn.active')?.dataset.tab==='notas'?document.getElementById('global-search-input').value:'';
+        return InventorySearch.notes(state,window.viewArchivedNotes,query);
+    }
     window.renderNotasTab = function() {
         const container = document.getElementById('notas-list-container'); const pagContainer = document.getElementById('notas-pagination-container'); if(!state.archivedNotes) state.archivedNotes = {};
-        const targetObj = window.viewArchivedNotes ? state.archivedNotes : state.notes; const keys = Object.keys(targetObj);
+        const targetObj = window.viewArchivedNotes ? state.archivedNotes : state.notes; const keys = filteredNoteKeys();
         for(const key of selectedNotes)if(!keys.includes(key))selectedNotes.delete(key);
-        document.getElementById('notes-selection-count').textContent=selectedNotes.size+' de '+keys.length+' notas seleccionadas (incluye todas las páginas).';
+        document.getElementById('notes-selection-count').textContent=selectedNotes.size+' de '+keys.length+' coincidencias seleccionadas (incluye todas las páginas filtradas).';
         document.getElementById('notes-bulk-move').textContent=window.viewArchivedNotes?'Desarchivar seleccionadas':'Archivar seleccionadas';
         document.getElementById('notes-bulk-move').disabled=!selectedNotes.size;
 
-        if(keys.length === 0) { container.innerHTML = `<p class="col-span-2 text-center text-gray-500 font-bold py-10">No hay notas ${window.viewArchivedNotes ? 'archivadas' : 'activas'}.</p>`; pagContainer.innerHTML = ''; return; }
+        if(keys.length === 0) { container.innerHTML = `<p class="col-span-2 text-center text-gray-500 font-bold py-10">No hay notas ${window.viewArchivedNotes ? 'archivadas' : 'activas'} que coincidan con la búsqueda.</p>`; pagContainer.innerHTML = ''; return; }
 
         const totalPages = Math.ceil(keys.length / notesPerPage) || 1;
         if (window.currentNotesPage > totalPages) window.currentNotesPage = totalPages;
@@ -830,7 +836,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     document.getElementById('notas-list-container').addEventListener('change',e=>{if(!e.target.matches('.note-select'))return;if(e.target.checked)selectedNotes.add(e.target.dataset.key);else selectedNotes.delete(e.target.dataset.key);renderNotasTab();});
-    document.getElementById('notes-select-all').onclick=()=>{Object.keys(window.viewArchivedNotes?state.archivedNotes:state.notes).forEach(k=>selectedNotes.add(k));renderNotasTab();};
+    document.getElementById('notes-select-all').onclick=()=>{filteredNoteKeys().forEach(k=>selectedNotes.add(k));renderNotasTab();};
     document.getElementById('notes-clear-selection').onclick=()=>{selectedNotes.clear();renderNotasTab();};
     async function moveSelectedNotes(keys,toArchive){
         const button=document.getElementById('notes-bulk-move');button.disabled=true;document.getElementById('loading-overlay').classList.add('show');
@@ -845,7 +851,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('print-notas-btn').onclick = () => {
         let html = `<div class="print-header"><img src="logo.png"><div class="print-header-text"><div class="print-header-line">DIRECCIÓN GENERAL DE RECURSOS MATERIALES Y SERVICIOS</div><div class="print-header-line">DIRECCIÓN DE ALMACÉN E INVENTARIOS</div><div class="print-header-line print-area-line">REPORTE DE NOTAS ${window.viewArchivedNotes ? 'ARCHIVADAS' : 'ACTIVAS'}</div></div><div class="print-date-abs">Fecha: ${new Date().toLocaleDateString()}</div></div><table class="print-table"><colgroup><col style="width: 16%;"><col style="width: 24%;"><col style="width: 60%;"></colgroup><thead><tr><th>CLAVE</th><th>DESCRIPCIÓN</th><th>NOTA</th></tr></thead><tbody>`;
         const targetObj = window.viewArchivedNotes ? state.archivedNotes : state.notes;
-        Object.keys(targetObj||{}).forEach(c => { html += `<tr><td style="white-space:nowrap">${escapeHTML(c)}</td><td>${escapeHTML((state.inventory.find(i=>i['CLAVE UNICA']===c)||{}).DESCRIPCION||'')}</td><td>${escapeHTML(targetObj[c])}</td></tr>`; });
+        filteredNoteKeys().forEach(c => { html += `<tr><td style="white-space:nowrap">${escapeHTML(c)}</td><td>${escapeHTML((state.inventory.find(i=>i['CLAVE UNICA']===c)||{}).DESCRIPCION||'')}</td><td>${escapeHTML(targetObj[c])}</td></tr>`; });
         document.getElementById('print-area').innerHTML = html + `</tbody></table>`; window.print(); document.getElementById('print-area').innerHTML = '';
     };
 
@@ -910,6 +916,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateReportUsers();
     };
 
+    function renderReportSearch() {
+        const query=document.getElementById('global-search-input').value.trim();
+        const panel=document.getElementById('report-search-panel'),list=document.getElementById('report-search-results');
+        list.replaceChildren();panel.hidden=!query;if(!query)return;
+        const types=[...document.getElementById('rep-type-select').options].map(o=>({value:o.value,label:o.textContent}));
+        const results=InventorySearch.reports(state,types,query,NOMBRES_AREAS);
+        document.getElementById('report-search-status').textContent=results.length ? results.length+' opciones. Elige una para abrir su vista previa.'+(results.length>40?' Se muestran las primeras 40; escribe más para precisar.':'') : 'No hay reportes que coincidan. Prueba con un tipo, área o resguardante.';
+        for(const result of results.slice(0,40)){
+            const button=document.createElement('button');button.type='button';button.textContent=result.label;
+            button.onclick=()=>{
+                document.getElementById('rep-type-select').value=result.type;
+                document.getElementById('rep-type-select').dispatchEvent(new Event('change'));
+                document.getElementById('rep-area-select').value=result.area;updateReportUsers();
+                document.getElementById('rep-user-select').value=result.user;
+                document.getElementById('rep-user-select').dispatchEvent(new Event('change'));
+                document.getElementById('rep-generate-btn').click();
+            };
+            list.append(button);
+        }
+    }
     function populateReportFilters() {
         const areas = [...new Set([...state.inventory.map(i=>i.areaOriginal), ...state.resguardantes.map(u=>u.area)])].sort();
         document.getElementById('rep-area-select').innerHTML = '<option value="all">TODAS LAS ÁREAS (Múltiples Páginas)</option>' + areas.map(a => `<option value="${escapeHTML(a)}">Área ${escapeHTML(a)} - ${escapeHTML(cleanAreaName(a, NOMBRES_AREAS[a]||''))}</option>`).join('');
@@ -932,7 +958,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function updateReportLocations() {
-        const consolidated = document.getElementById('rep-user-select').value === '__area__';
         document.getElementById('rep-firma-2').disabled = false;
         document.getElementById('rep-user-select').disabled=document.getElementById('rep-type-select').value==='pendientes';
         document.getElementById('rep-firma-2').parentElement.title='';
@@ -1082,28 +1107,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                      if (index < usersToPrint.length - 1) fullPrintHTML += `<div class="page-break"></div>`;
                 }
             } else {
-
-                const getTipoBien = (item) => {
-                    if(item._type === 'inv') {
-                        let t = (item.listadoOriginal || '').toUpperCase();
-                        if(t.includes('BIENES MENORES')) return 'Bienes Menores';
-                        if(t.includes('ARRENDAMIENTO')) return 'Arrendamiento';
-                        if(t.includes('CÁMARA') || t.includes('CAMARA')) return 'Cámara';
-                        return item.listadoOriginal || 'Desconocido';
-                    }
-                    if(item.personal === 'Si') return 'Bien Personal';
-                    if(item.posesion === 'Arrendamiento') return 'Arrendamiento';
-                    if(item.posesion === 'Cámara') return 'Cámara Controlable';
-                    if(item.posesion === 'Propiedad del Grupo') return 'Grupo Parlamentario';
-                    return item.posesion || 'Desconocido';
-                };
-                const getProcedencia = (item) => {
-                    if(item.posesion === 'Arrendamiento' || item.listadoOriginal === 'Arrendamiento') return item.numContrato || 'LXVIDG AJ- 070/2024';
-                    if(item.posesion === 'Cámara' && item.areaProcedencia) return item.areaProcedencia;
-                    if(item.posesion === 'Propiedad del Grupo' && item.grupoParlamentario) return item.grupoParlamentario;
-                    if(item._type === 'inv' && item.areaOriginal && item.areaOriginal !== 'Sin Área') return item.areaOriginal;
-                    return 'N/A';
-                };
 
                 let userItems = [];
                 if(type === 'resguardo') { userItems = [...state.inventory.filter(i => i.UBICADO==='SI' && i['NOMBRE DE USUARIO'] === u.name).map(i=>({...i, _type:'inv'}))]; if(incAdic) userItems = [...userItems, ...state.additionalItems.filter(a => a.usuario === u.name).map(a=>({...a, _type:'adic'}))]; }
