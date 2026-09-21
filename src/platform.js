@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', () => {
   const label = document.getElementById('device-status');
   let saving = 'Datos locales · Trabajo por parejas';
-  const render = () => { label.textContent = 'v1.0.2 · ' + (navigator.onLine ? 'Con conexión' : 'Sin conexión') + ' · ' + saving; };
+  const render = () => { label.textContent = 'v1.1.0 · ' + (navigator.onLine ? 'Con conexión' : 'Sin conexión') + ' · ' + saving; };
   window.addEventListener('online', render);
   window.addEventListener('offline', render);
   window.addEventListener('inventory-save', e => { saving=e.detail; render(); });

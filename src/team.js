@@ -26,12 +26,28 @@
   const excel = item => ({'Ubicado Por':item.ubicadoPor || '', 'Auxiliado Por':item.auxiliadoPor || ''});
   function remember(team) { sessionStorage.setItem(SESSION, JSON.stringify(pair(team.active, team.companion))); }
   function forget() { sessionStorage.removeItem(SESSION); }
+  function validateDirectory(entries) {
+    if (!Array.isArray(entries)) throw Error('El catálogo de auditores no es válido.');
+    const seen = new Set();
+    return entries.map(entry => {
+      const p = person(entry), key = p.employeeNumber.replace(/^0+/, '') || '0';
+      if (seen.has(key)) throw Error('El catálogo contiene números de empleado duplicados.');
+      seen.add(key); return p;
+    });
+  }
+  async function exportDirectory() {
+    return validateDirectory(await root.InventoryStorage.getItem('appData','auditorDirectory') || root.InventoryPeople);
+  }
   async function mount(open) {
     const $ = id => document.getElementById(id), status = $('team-status');
     let directory = [...root.InventoryPeople];
     try {
-      const custom = JSON.parse(localStorage.getItem(DIRECTORY) || '[]');
+      const saved = await root.InventoryStorage.getItem('appData','auditorDirectory');
+      const custom = saved || JSON.parse(localStorage.getItem(DIRECTORY) || '[]');
+      if (saved) directory = [];
       for (const entry of custom) { const p = person(entry); if (!directory.some(x => x.employeeNumber === p.employeeNumber)) directory.push(p); }
+      directory = validateDirectory(directory);
+      if (!saved) await root.InventoryStorage.setItem('appData','auditorDirectory',directory);
     } catch { status.textContent = 'No se pudo recuperar el directorio local. Puedes registrar de nuevo a las personas.'; }
     const confirmed = {active:null, companion:null};
     const normalize = value => value.trim().replace(/^0+/, '') || '0';
@@ -70,19 +86,20 @@
       $('team-'+role+'-accept').onclick = () => accept(role);
       $('team-'+role).onkeydown = event => { if(event.key === 'Enter') { event.preventDefault(); accept(role); } };
     }
-    $('register-person').onsubmit = event => {
-      event.preventDefault();
+    $('register-person').onsubmit = async event => {
+      event.preventDefault(); const form = event.target, button = form.querySelector('button'); button.disabled = true;
       try {
         const entry = person({name:$('person-name').value, employeeNumber:$('person-number').value});
         if (directory.some(p => normalize(p.employeeNumber) === normalize(entry.employeeNumber))) throw Error('Ese número de empleado ya está registrado. Escríbelo para confirmar el nombre.');
         const next = [...directory,entry];
-        localStorage.setItem(DIRECTORY,JSON.stringify(next));
+        await root.InventoryStorage.setItem('appData','auditorDirectory',next);
         directory = next;
         const role = $('register-target').value;
         $('team-'+role).value = entry.employeeNumber;
-        invalidate(role); event.target.reset(); $('register-details').open = false;
+        invalidate(role); form.reset(); $('register-details').open = false;
         status.textContent = 'Persona registrada. Confirma su nombre con Aceptar.';
       } catch(error) { status.textContent = error.message; }
+      finally { button.disabled = false; }
     };
     $('team-form').onsubmit = async event => {
       event.preventDefault(); $('team-start').disabled = true;
@@ -99,6 +116,6 @@
       if (saved) await open(pair(saved.active,saved.companion));
     } catch(error) { forget(); status.textContent = 'Selecciona la pareja para continuar. ' + error.message; }
   }
-  root.InventoryTeam = {person, pair, swap, attribution, clear, savedAttribution, label, excel, remember, forget, mount};
+  root.InventoryTeam = {person, pair, swap, attribution, clear, savedAttribution, label, excel, remember, forget, mount, validateDirectory, exportDirectory};
   if (typeof module !== 'undefined') module.exports = root.InventoryTeam;
 })(globalThis);

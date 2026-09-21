@@ -3,7 +3,20 @@
 const NOMBRES_AREAS = { "131100": "Dirección de Almacén e Inventarios", "131000": "Dirección de Almacén e Inventarios", "1": "Dirección General", "2": "Finanzas", "3": "Recursos Humanos", "4": "Operaciones", "5": "Sistemas", "CONTRATO": "Arrendamiento" };
 const defaultPerfilesMagicos = [ { regexStr: '^MZ01', desc: 'CPU', marca: 'LENOVO', modelo: 'THINK CENTRE M75s GEN 5', posesion: 'Arrendamiento' }, { regexStr: '^VR00', desc: 'MONITOR', marca: 'LENOVO', modelo: 'S22I-30', posesion: 'Arrendamiento' }, { regexStr: '^8SSD51', desc: 'TECLADO', marca: 'LENOVO', modelo: 'KU1601', posesion: 'Arrendamiento' }, { regexStr: '^8SSM51', desc: 'MOUSE', marca: 'LENOVO', modelo: 'MOJUUO', posesion: 'Arrendamiento' }, { regexStr: '^PF[A-Z0-9]{6}', desc: 'LAPTOP', marca: 'LENOVO', modelo: 'THINKPAD', posesion: 'Arrendamiento' }, { regexStr: '^12240', desc: 'REGULADOR DE VOLTAJE', marca: 'SMARTBITT', modelo: 'SBNB500', posesion: 'Arrendamiento' }, { regexStr: '^22WZ', desc: 'TELÉFONO', marca: 'AVAYA', modelo: 'VANTAGE 12', posesion: 'Cámara' }, { regexStr: '^17WZ[A-Z0-9]{8,}', desc: 'TELÉFONO', marca: 'AVAYA', modelo: '9611G', posesion: 'Cámara' } ];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const gate = document.getElementById('workspace-gate');
+    const waiting = setTimeout(() => {
+        document.getElementById('workspace-message').textContent = 'El inventario está abierto en otra pestaña. Continúa allí o ciérrala: esta ventana se habilitará automáticamente con los datos más recientes.';
+    }, 700);
+    try {
+        await InventoryStorage.acquireWorkspace();
+        clearTimeout(waiting);
+        await InventoryStorage.init('parejas-local-v1');
+        gate.hidden = true; document.getElementById('app-container').inert = false;
+    } catch(error) {
+        clearTimeout(waiting); document.getElementById('workspace-message').textContent = error.message; return;
+    }
+    window.addEventListener('pageshow', event => { if(event.persisted) location.reload(); });
 
 
 
@@ -47,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const box=document.getElementById('recovery-points');box.replaceChildren();
         try{const points=await photoDB.getItem('appData','recoveryPoints')||[];if(!points.length)box.textContent='Aún no hay puntos de recuperación.';
         for(const point of points){const card=document.createElement('section');card.className='area-review';const text=document.createElement('p');text.textContent=new Date(point.at).toLocaleString('es-MX')+' · '+point.label+' · '+point.state.inventory.length+' bienes · '+(point.state.additionalItems||[]).length+' adicionales · '+point.images.length+' imágenes';const button=document.createElement('button');button.textContent='Restaurar este punto';button.onclick=()=>showConfirm('Restaurar punto de recuperación','Se reemplazarán los datos, fotografías, planos y borradores actuales por los del '+new Date(point.at).toLocaleString('es-MX')+'. Primero se guardará un punto del estado actual. ¿Continuar?',async()=>{
-            const overlay=document.getElementById('loading-overlay');overlay.classList.add('show');try{const restored=await InventoryRecovery.restore(photoDB,point.id,state);state={...InventoryData.clean(restored.state),loggedIn:state.loggedIn,currentUser:state.currentUser,companion:state.companion};drafts=structuredClone(restored.drafts);stateHistory=[];pendingConcilData=null;document.getElementById('conciliador-results').classList.add('hidden');recalculateLocationCounts();refreshListingViews();renderUsers();renderAdicionales();renderNotasTab();updateBanner();restoreAdditionalDraft();renderSessionHistory();await renderRecoveryPoints();showToast('Punto restaurado y guardado en este equipo','success');}catch(e){showToast('No se pudo restaurar. '+escapeHTML(e.message),'error');}finally{overlay.classList.remove('show');}
+            const overlay=document.getElementById('loading-overlay');overlay.classList.add('show');try{const restored=await InventoryRecovery.restore(photoDB,point.id,state);state={...InventoryData.clean(restored.state),loggedIn:state.loggedIn,currentUser:state.currentUser,companion:state.companion};drafts=structuredClone(restored.drafts);stateHistory=[];pendingConcilData=null;document.getElementById('conciliador-results').classList.add('hidden');recalculateLocationCounts();refreshListingViews();renderUsers();renderAdicionales();renderNotasTab();updateBanner();restoreAdditionalDraft();renderSessionHistory();await renderRecoveryPoints();showToast('Punto restaurado y guardado en este equipo','success');location.reload();}catch(e){showToast('No se pudo restaurar. '+escapeHTML(e.message),'error');}finally{overlay.classList.remove('show');}
         });card.append(text,button);box.append(card);}}
         catch{box.textContent='No se pudieron leer los puntos de recuperación.';}
     }
@@ -1270,10 +1283,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const session=JSON.stringify(InventoryData.clean(state));
             const zip=new JSZip();zip.file('session.json',session);
             const rfidBackup=await InventoryRFIDStore.exportPack(photoDB);zip.file('rfid-catalog.json',JSON.stringify(rfidBackup));
+            const auditors=await InventoryTeam.exportDirectory();zip.file('auditors.json',JSON.stringify(auditors));
             let images=0;
             for(const store of ['photos','layoutImages'])for(const entry of await photoDB.getAllItems(store)){zip.file(store+'/'+entry.key,entry.value);images++;}
             const timestamp=new Date().toISOString(),snapshot=JSON.parse(session);
-            zip.file('backup-manifest.json',JSON.stringify({version:2,createdAt:timestamp,inventory:snapshot.inventory.length,additional:(snapshot.additionalItems||[]).length,images,rfidTags:rfidBackup.records.length}));
+            zip.file('backup-manifest.json',JSON.stringify({version:3,createdAt:timestamp,inventory:snapshot.inventory.length,additional:(snapshot.additionalItems||[]).length,images,rfidTags:rfidBackup.records.length,auditors:auditors.length}));
             const content=await zip.generateAsync({type:'blob'});
             await InventoryBackups.inspect(content);
             const a=document.createElement('a'),url=URL.createObjectURL(content);a.href=url;a.download='Inventario_'+timestamp.replace(/[:.]/g,'-')+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
@@ -1286,10 +1300,38 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('import-file-input').onchange = async e => {
         const file = e.target.files[0]; if (!file) return;
         document.getElementById('loading-overlay').classList.add('show');
-        try { await window.InventoryBackups.restore(file, photoDB); location.reload(); }
+        try {
+            const info = await InventoryBackups.inspect(file);
+            const modal = document.getElementById('restore-backup-dialog');
+            document.getElementById('restore-file-name').textContent = file.name;
+            const rows = [
+                ['Bienes',state.inventory.length,info.state.inventory.length],
+                ['Adicionales',state.additionalItems.length,(info.state.additionalItems||[]).length],
+                ['Resguardantes',state.resguardantes.length,info.state.resguardantes.length],
+                ['Imágenes',(await photoDB.getAllItems('photos')).length+(await photoDB.getAllItems('layoutImages')).length,info.images.length],
+                ['Auditores',(await InventoryTeam.exportDirectory()).length,info.auditors ? info.auditors.length : 'Se conservan'],
+                ['Etiquetas RFID',(await InventoryRFIDStore.exportPack(photoDB)).records.length,info.rfid ? info.rfid.records.length : 'Se conservan']
+            ];
+            document.getElementById('restore-summary').replaceChildren(...rows.map(([label,current,next]) => {
+                const row=document.createElement('tr');
+                for(const value of [label,current,next]){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}return row;
+            }));
+            document.getElementById('restore-error').textContent='';
+            modal.showModal();
+            document.getElementById('restore-confirm').onclick = async () => {
+                const button=document.getElementById('restore-confirm');button.disabled=true;
+                document.getElementById('restore-cancel').disabled=true;
+                button.textContent='Restaurando…';
+                try { await InventoryBackups.restore(file,photoDB,state); location.reload(); }
+                catch(error){document.getElementById('restore-error').textContent='No se pudo restaurar. Se conservan los datos anteriores. '+error.message;}
+                finally{button.disabled=false;button.textContent='Restaurar respaldo';document.getElementById('restore-cancel').disabled=false;}
+            };
+        }
         catch (error) { showToast('No se pudo restaurar el respaldo. Se conservan los datos anteriores.', 'error'); }
         finally { document.getElementById('loading-overlay').classList.remove('show'); e.target.value=''; }
     };
+    document.getElementById('restore-cancel').onclick=()=>document.getElementById('restore-backup-dialog').close();
+    document.getElementById('restore-backup-dialog').addEventListener('cancel',event=>{if(document.getElementById('restore-confirm').disabled)event.preventDefault();});
     document.getElementById('clear-session-btn').onclick = () => { showConfirm('¡PELIGRO! Borrar Todo', 'Esto eliminará todo el inventario, FOTOS y el catálogo RFID de este navegador.', () => { document.getElementById('loading-overlay').classList.add('show'); try { if(photoDB.db) { photoDB.db.close(); } const req = indexedDB.deleteDatabase(photoDB.name); req.onsuccess = () => window.location.reload(); req.onerror = () => { window.location.reload(); }; req.onblocked = () => { window.location.reload(); }; } catch(e) { window.location.reload(); } }); };
     document.querySelectorAll('.modal-overlay .fa-xmark, button[id$="-cancel-btn"], button[id$="-close-btn"]').forEach(b => b.onclick = e => { e.target.closest('.modal-overlay').classList.remove('show'); stopCamera(); if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop().catch(err => {}); } focusSearch(); });
 

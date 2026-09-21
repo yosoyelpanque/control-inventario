@@ -1,6 +1,12 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const T = require('../src/team.js'), D = require('../src/data.js'), A = require('../src/additional-rules.js');
 const active = {name:'Persona Uno',employeeNumber:'00123'}, companion = {name:'Persona Dos',employeeNumber:'00456'};
+test('catálogo portable valida identidades y rechaza duplicados con ceros iniciales', () => {
+  assert.deepEqual(T.validateDirectory([active, companion]), [active, companion]);
+  assert.throws(() => T.validateDirectory({}));
+  assert.throws(() => T.validateDirectory([active, {...companion, employeeNumber:'123'}]));
+  assert.throws(() => T.validateDirectory([{name:'Persona',employeeNumber:'abc'}]));
+});
 test('requiere nombres y empleados distintos, conservando ceros iniciales', () => {
   assert.equal(T.pair(active,companion).active.employeeNumber,'00123');
   assert.throws(() => T.pair(active,{...companion,employeeNumber:'123'}));

@@ -34,10 +34,14 @@ Pruebas de navegador con Edge/Playwright, datos sintéticos y perfil aislado; es
 
 No se verificaron cámara física, lector RFID físico, impresora, instalación PWA en teléfono real ni grandes volúmenes de datos. Las imágenes del respaldo fueron sintéticas; no representan una prueba del dispositivo de captura. Estas pruebas no garantizan la ausencia de fallos fuera de los casos ejercitados.
 
-## Mejoras siguientes propuestas
+## Mejoras implementadas — 21 de septiembre de 2026
 
-1. **Evitar edición simultánea en varias pestañas.** Las pestañas comparten IndexedDB y guardan el estado completo. Un aviso o bloqueo de escritura reduciría el riesgo de sobrescribir cambios de otra pestaña.
-2. **Restauración con resumen y recuperación previa.** Mostrar cantidades antes de reemplazar el inventario y guardar un punto recuperable del estado anterior. Actualmente se valida el ZIP, pero la selección de un archivo válido inicia su restauración.
-3. **Directorio de auditores transportable.** Incluir los registros locales de personas en un respaldo opcional. Actualmente el ZIP conserva la autoría de los bienes, pero el directorio personalizado permanece en ese navegador.
-4. **Pruebas con archivos reales y equipos de trabajo.** Incorporar archivos anonimizados de formatos habituales y verificar cámara, escáner e impresión en los equipos donde se usará la aplicación.
+- Una sola pestaña puede abrir el espacio de trabajo. Las demás esperan; al cerrar la primera, la siguiente carga los datos recientes. Requiere un navegador con Web Locks y protege pestañas del mismo origen y perfil.
+- Restaurar ZIP presenta cantidades actuales y entrantes, permite cancelar y guarda un punto previo en la misma transacción que reemplaza los datos. Una escritura fallida revierte toda la transacción.
+- El catálogo de auditores se migra al almacenamiento del inventario y viaja en los ZIP nuevos. Los ZIP antiguos conservan los catálogos ausentes.
+- Los nuevos puntos de recuperación incluyen directorio y RFID, además de inventario, fotos y borradores.
+- Detalles del bien con serie en una fila completa y acciones siempre visibles; captura y edición de adicionales con espacios y controles ampliados; restauración con resumen comparativo. Se mantiene la paleta y los componentes de la aplicación existente.
 
+Validación: 29 pruebas unitarias correctas y una omitida por archivos originales ausentes. Edge/Playwright en 1440 × 1000 y 390 × 844: bloqueo entre pestañas, apertura tras cierre, cancelación, restauración, recuperación, fallo de escritura simulado sin pérdida, ZIP antiguo y catálogo inválido. Sin errores de consola. Se revisaron distribución, tipografía, contraste, botones visibles y adaptación móvil. También pasó la regresión de captura, Excel, reportes, notas y RFID.
+
+Pendiente: pruebas con archivos anonimizados reales y cámara, lector e impresora físicos. La protección entre pestañas requiere actualizar todas las ventanas antiguas; no sincroniza equipos ni perfiles de navegador distintos.

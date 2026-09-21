@@ -5,7 +5,19 @@
   window.addEventListener('beforeunload',e=>{if(pending.size||failures.size){e.preventDefault();e.returnValue='';}});
   const api = {
     db: null, name: null,
+    acquireWorkspace() {
+      // One writer for the entire workspace, including photos, drafts and RFID.
+      // The browser releases this lock when the document closes or reloads.
+      return new Promise((resolve,reject) => {
+        if (!navigator.locks) return reject(new Error('Actualiza el navegador para proteger el inventario entre pestañas.'));
+        navigator.locks.request('inventario-parejas-workspace', async () => {
+          resolve();
+          await new Promise(() => {});
+        }).catch(reject);
+      });
+    },
     async init(accountId) {
+      if (api.db) return;
       if (!accountId) throw new Error('Falta el espacio de trabajo local');
       api.name = 'InventarioPro-vNext-' + accountId;
       api.db = await new Promise((resolve,reject) => {
