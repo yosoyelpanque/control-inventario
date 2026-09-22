@@ -1,0 +1,334 @@
+/* ================================================================
+   TEMA: CÁMARA DE DIPUTADOS — Paleta Institucional
+   ================================================================
+   Sobreescribe las clases de Tailwind para reemplazar la paleta
+   indigo/purple por la paleta institucional verde/ámbar/rojo.
+   Solo afecta la interfaz de pantalla; los estilos de impresión
+   no se modifican.
+   ================================================================ */
+
+/* ── Variables globales ────────────────────────────────────────── */
+:root {
+  /* Primarios – Verdes institucionales */
+  --cd-green-900: #033E3C;
+  --cd-green-800: #03564B;
+  --cd-green-700: #006847;
+  --cd-green-600: #007A54;
+  --cd-green-500: #008C60;
+  --cd-green-400: #05DD80;
+  --cd-green-100: #d1f0e0;
+  --cd-green-50:  #e8f5ef;
+
+  /* Cálidos – Ámbar / Camel */
+  --cd-amber-800: #A35C2B;
+  --cd-amber-600: #C48D5C;
+  --cd-amber-400: #E09B61;
+  --cd-amber-100: #f5e6d0;
+  --cd-amber-50:  #fef7ed;
+
+  /* Rojos – Institucional */
+  --cd-red-900: #5C0D1F;
+  --cd-red-800: #721738;
+  --cd-red-700: #CE1126;
+  --cd-red-600: #B20F21;
+  --cd-red-500: #F33443;
+  --cd-red-400: #F40049;
+  --cd-red-100: #fcdde1;
+  --cd-red-50:  #fef2f3;
+
+  /* Neutros cálidos */
+  --cd-cream:     #FFF7D2;
+  --cd-cream-dark:#f5eab5;
+  --cd-brown-700: #534741;
+  --cd-brown-500: #6b5d54;
+  --cd-gray:      #808080;
+}
+
+/* ── Fondo general ─────────────────────────────────────────────── */
+@media screen {
+  body { background-color: #f5f3f0; }
+  .bg-gray-100 { background-color: #f5f3f0 !important; }
+}
+
+/* ================================================================
+   INDIGO → VERDE INSTITUCIONAL
+   ================================================================ */
+
+/* — Backgrounds — */
+body .bg-indigo-50  { background-color: var(--cd-green-50) !important; }
+body .bg-indigo-100 { background-color: var(--cd-green-100) !important; }
+body .bg-indigo-500 { background-color: var(--cd-green-700) !important; }
+body .bg-indigo-600 { background-color: var(--cd-green-800) !important; }
+
+/* — Text — */
+body .text-indigo-400 { color: var(--cd-green-400) !important; }
+body .text-indigo-500 { color: var(--cd-green-700) !important; }
+body .text-indigo-600 { color: var(--cd-green-800) !important; }
+body .text-indigo-700 { color: var(--cd-green-700) !important; }
+body .text-indigo-800 { color: var(--cd-green-800) !important; }
+body .text-indigo-900 { color: var(--cd-green-900) !important; }
+
+/* — Borders — */
+body .border-indigo-100 { border-color: var(--cd-green-100) !important; }
+body .border-indigo-200 { border-color: var(--cd-green-100) !important; }
+body .border-indigo-500 { border-color: var(--cd-green-700) !important; }
+
+/* — Hover — */
+body .hover\:bg-indigo-50:hover  { background-color: var(--cd-green-50) !important; }
+body .hover\:bg-indigo-100:hover { background-color: var(--cd-green-100) !important; }
+body .hover\:bg-indigo-200:hover { background-color: var(--cd-green-100) !important; }
+body .hover\:bg-indigo-600:hover { background-color: var(--cd-green-800) !important; }
+body .hover\:bg-indigo-700:hover { background-color: var(--cd-green-900) !important; }
+body .hover\:text-indigo-500:hover { color: var(--cd-green-700) !important; }
+body .hover\:text-indigo-600:hover { color: var(--cd-green-800) !important; }
+body .hover\:border-indigo-300:hover { border-color: var(--cd-green-100) !important; }
+
+/* — Focus — */
+body .focus\:border-indigo-500:focus { border-color: var(--cd-green-700) !important; }
+body .focus\:ring-indigo-200:focus { --tw-ring-color: var(--cd-green-100) !important; }
+
+/* ================================================================
+   PURPLE → TEAL / VERDE OSCURO
+   ================================================================ */
+
+body .bg-purple-50  { background-color: var(--cd-green-50) !important; }
+body .bg-purple-100 { background-color: var(--cd-green-100) !important; }
+body .bg-purple-600 { background-color: var(--cd-green-800) !important; }
+
+body .text-purple-400 { color: var(--cd-green-400) !important; }
+body .text-purple-700 { color: var(--cd-green-800) !important; }
+body .text-purple-800 { color: var(--cd-green-900) !important; }
+body .text-purple-900 { color: var(--cd-green-900) !important; }
+
+body .border-purple-200 { border-color: var(--cd-green-100) !important; }
+body .border-purple-300 { border-color: var(--cd-green-100) !important; }
+
+body .hover\:bg-purple-200:hover { background-color: var(--cd-green-100) !important; }
+body .hover\:bg-purple-700:hover { background-color: var(--cd-green-900) !important; }
+body .focus\:border-purple-500:focus { border-color: var(--cd-green-700) !important; }
+
+/* ================================================================
+   BLUE → TEAL VERDE
+   ================================================================ */
+
+body .bg-blue-50  { background-color: var(--cd-green-50) !important; }
+body .bg-blue-100 { background-color: var(--cd-green-100) !important; }
+body .bg-blue-200 { background-color: var(--cd-green-100) !important; }
+body .bg-blue-500 { background-color: var(--cd-green-800) !important; }
+body .bg-blue-600 { background-color: var(--cd-green-700) !important; }
+
+body .text-blue-600 { color: var(--cd-green-700) !important; }
+body .text-blue-700 { color: var(--cd-green-800) !important; }
+body .text-blue-800 { color: var(--cd-green-900) !important; }
+body .text-blue-900 { color: var(--cd-green-900) !important; }
+
+body .border-blue-200 { border-color: var(--cd-green-100) !important; }
+body .border-blue-500 { border-color: var(--cd-green-700) !important; }
+
+body .hover\:bg-blue-200:hover { background-color: var(--cd-green-100) !important; }
+body .hover\:bg-blue-600:hover { background-color: var(--cd-green-800) !important; }
+body .hover\:bg-blue-700:hover { background-color: var(--cd-green-900) !important; }
+
+/* ================================================================
+   RED → ROJO INSTITUCIONAL
+   ================================================================ */
+
+body .bg-red-500 { background-color: var(--cd-red-700) !important; }
+body .bg-red-600 { background-color: var(--cd-red-600) !important; }
+body .bg-red-100 { background-color: var(--cd-red-100) !important; }
+body .bg-red-50  { background-color: var(--cd-red-50) !important; }
+
+body .text-red-500 { color: var(--cd-red-700) !important; }
+body .text-red-600 { color: var(--cd-red-700) !important; }
+body .text-red-700 { color: var(--cd-red-800) !important; }
+body .text-red-800 { color: var(--cd-red-900) !important; }
+
+body .border-red-100 { border-color: var(--cd-red-100) !important; }
+body .border-red-200 { border-color: var(--cd-red-100) !important; }
+body .border-red-300 { border-color: #e8a0a8 !important; }
+body .border-red-500 { border-color: var(--cd-red-700) !important; }
+
+body .hover\:bg-red-200:hover { background-color: var(--cd-red-100) !important; }
+body .hover\:bg-red-500:hover { background-color: var(--cd-red-700) !important; }
+body .hover\:bg-red-600:hover { background-color: var(--cd-red-600) !important; }
+body .hover\:bg-red-700:hover { background-color: var(--cd-red-900) !important; }
+body .hover\:text-red-600:hover { color: var(--cd-red-700) !important; }
+body .hover\:bg-red-50:hover { background-color: var(--cd-red-50) !important; }
+
+/* ================================================================
+   ORANGE → ÁMBAR INSTITUCIONAL
+   ================================================================ */
+
+body .bg-orange-50  { background-color: var(--cd-amber-50) !important; }
+body .bg-orange-100 { background-color: var(--cd-amber-100) !important; }
+body .bg-orange-500 { background-color: var(--cd-amber-800) !important; }
+
+body .text-orange-600 { color: var(--cd-amber-800) !important; }
+body .text-orange-700 { color: var(--cd-amber-800) !important; }
+body .text-orange-800 { color: var(--cd-amber-800) !important; }
+
+body .border-orange-200 { border-color: var(--cd-amber-100) !important; }
+body .border-orange-300 { border-color: var(--cd-amber-600) !important; }
+body .border-orange-500 { border-color: var(--cd-amber-800) !important; }
+
+body .hover\:bg-orange-200:hover { background-color: var(--cd-amber-100) !important; }
+body .hover\:bg-orange-600:hover { background-color: var(--cd-amber-600) !important; }
+
+/* ================================================================
+   YELLOW → CREMA INSTITUCIONAL
+   ================================================================ */
+
+body .bg-yellow-50  { background-color: var(--cd-cream) !important; }
+body .bg-yellow-100 { background-color: var(--cd-cream) !important; }
+body .bg-yellow-200 { background-color: var(--cd-cream-dark) !important; }
+body .bg-yellow-500 { background-color: var(--cd-amber-600) !important; }
+
+body .text-yellow-600 { color: var(--cd-amber-800) !important; }
+body .text-yellow-700 { color: var(--cd-amber-800) !important; }
+body .text-yellow-800 { color: var(--cd-brown-700) !important; }
+
+body .border-yellow-400 { border-color: var(--cd-amber-600) !important; }
+body .border-yellow-500 { border-color: var(--cd-amber-600) !important; }
+
+body .hover\:bg-yellow-600:hover { background-color: var(--cd-amber-800) !important; }
+
+/* ================================================================
+   PINK → ÁMBAR CÁLIDO
+   ================================================================ */
+
+body .bg-pink-500 { background-color: var(--cd-amber-600) !important; }
+body .hover\:bg-pink-600:hover { background-color: var(--cd-amber-800) !important; }
+
+/* ================================================================
+   EMERALD → VERDE INSTITUCIONAL
+   ================================================================ */
+
+body .bg-emerald-600 { background-color: var(--cd-green-700) !important; }
+body .border-emerald-300 { border-color: var(--cd-green-100) !important; }
+body .hover\:bg-emerald-700:hover { background-color: var(--cd-green-900) !important; }
+
+/* ================================================================
+   GREEN (success) — ajustes sutiles
+   ================================================================ */
+
+body .border-green-500 { border-color: var(--cd-green-700) !important; }
+body .bg-green-500 { background-color: var(--cd-green-700) !important; }
+body .bg-green-600 { background-color: var(--cd-green-800) !important; }
+body .hover\:bg-green-600:hover { background-color: var(--cd-green-800) !important; }
+body .hover\:bg-green-700:hover { background-color: var(--cd-green-900) !important; }
+
+/* ================================================================
+   GRAY — fondo cálido
+   ================================================================ */
+
+@media screen {
+  body .bg-gray-900 { background-color: #1a2420 !important; }
+  body .bg-gray-800 { background-color: #253330 !important; }
+}
+
+/* ================================================================
+   CHECKBOX & FORM ACCENTS
+   ================================================================ */
+
+@media screen {
+  input[type="checkbox"] { accent-color: var(--cd-green-700) !important; }
+  input[type="radio"] { accent-color: var(--cd-green-700) !important; }
+  ::selection { background: var(--cd-green-100); color: var(--cd-green-900); }
+}
+
+/* ================================================================
+   GRADIENT BUTTON
+   ================================================================ */
+
+@media screen {
+  .btn-gradient {
+    background-image: linear-gradient(to right, var(--cd-green-700), var(--cd-green-800), var(--cd-green-900)) !important;
+  }
+}
+
+/* ================================================================
+   TAB ACTIVE STATE
+   ================================================================ */
+
+@media screen {
+  .tab-btn.active {
+    border-top-color: var(--cd-green-700) !important;
+    color: var(--cd-green-700) !important;
+  }
+}
+
+/* ================================================================
+   DASHBOARD STATS — border-top colors
+   ================================================================ */
+
+@media screen {
+  #dashboard-stats > div:nth-child(1) { border-top-color: var(--cd-green-700) !important; }
+  #dashboard-stats > div:nth-child(2) { border-top-color: var(--cd-green-400) !important; }
+  #dashboard-stats > div:nth-child(3) { border-top-color: var(--cd-red-700) !important; }
+}
+
+/* ================================================================
+   LOADING OVERLAY — tonos institucionales
+   ================================================================ */
+
+@media screen {
+  #loading-overlay .bg-indigo-500,
+  #loading-progress-bar { background-color: var(--cd-green-700) !important; }
+}
+
+/* ================================================================
+   NOTAS — fondo crema para elementos con nota
+   ================================================================ */
+
+@media screen {
+  .has-note { background-color: var(--cd-cream) !important; }
+}
+
+/* ================================================================
+   PREVIEW — borde de ubicación en verde institucional
+   ================================================================ */
+
+@media screen {
+  .preview-loc-photo { border-color: var(--cd-green-700) !important; background-color: var(--cd-green-50) !important; }
+}
+
+/* ================================================================
+   GLASS EFFECT — ajuste cálido
+   ================================================================ */
+
+@media screen {
+  .glass-effect {
+    box-shadow: 0 8px 32px 0 rgba(3, 62, 60, 0.08) !important;
+  }
+}
+
+/* ================================================================
+   HEADER — acento institucional
+   ================================================================ */
+
+@media screen {
+  #main-header {
+    border-left: 4px solid var(--cd-green-700);
+  }
+}
+
+/* ================================================================
+   ACTIVE USER BANNER — verde institucional
+   ================================================================ */
+
+@media screen {
+  #active-user-banner {
+    border-left-color: var(--cd-green-700) !important;
+  }
+}
+
+/* ================================================================
+   SCROLLBAR (webkit)
+   ================================================================ */
+
+@media screen {
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #f0ede8; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--cd-green-100); border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--cd-green-700); }
+}
