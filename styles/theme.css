@@ -332,3 +332,145 @@ body .hover\:bg-green-700:hover { background-color: var(--cd-green-900) !importa
   ::-webkit-scrollbar-thumb { background: var(--cd-green-100); border-radius: 8px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--cd-green-700); }
 }
+
+/* ================================================================
+   BOTONES DE ACCIÓN VIVIDOS — Modal de detalle
+   ================================================================ */
+
+@media screen {
+  /* Ubicar — verde esmeralda saturado */
+  #detail-btn-ubicar {
+    background-color: #059669 !important;
+    color: white !important;
+  }
+  #detail-btn-ubicar:hover { background-color: #047857 !important; }
+
+  /* Reetiquetar — ámbar brillante */
+  #detail-btn-reetiquetar {
+    background-color: #E09B61 !important;
+    color: white !important;
+  }
+  #detail-btn-reetiquetar:hover { background-color: #C48D5C !important; }
+
+  /* Quitar/Desubicar — rojo coral */
+  #detail-btn-desubicar {
+    background-color: #F33443 !important;
+    color: white !important;
+  }
+  #detail-btn-desubicar:hover { background-color: #CE1126 !important; }
+
+  /* Nota — crema con borde dorado */
+  #detail-btn-nota {
+    background-color: #FFF7D2 !important;
+    color: #534741 !important;
+    border: 2px solid #C48D5C !important;
+  }
+  #detail-btn-nota:hover { background-color: #f5eab5 !important; }
+
+  /* Foto — teal institucional */
+  #detail-btn-foto {
+    background-color: #03564B !important;
+    color: white !important;
+  }
+  #detail-btn-foto:hover { background-color: #033E3C !important; }
+}
+
+/* ================================================================
+   BOTONES DE ACCIÓN — Barra de herramientas principal
+   ================================================================ */
+
+@media screen {
+  #nav-ubicado-btn { background-color: #059669 !important; }
+  #nav-ubicado-btn:hover { background-color: #047857 !important; }
+  #nav-desubicar-btn { background-color: #F33443 !important; }
+  #nav-desubicar-btn:hover { background-color: #CE1126 !important; }
+  #nav-bulk-note-btn { background-color: #C48D5C !important; }
+  #nav-bulk-note-btn:hover { background-color: #A35C2B !important; }
+  #nav-qr-scan-btn { background-color: #03564B !important; }
+  #nav-qr-scan-btn:hover { background-color: #033E3C !important; }
+}
+
+/* ================================================================
+   INDICADORES DE ESTADO — Modal de detalle
+   ================================================================ */
+
+@media screen {
+  .detail-status-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 0;
+  }
+
+  .detail-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .badge-retag {
+    background: #E09B611a;
+    color: #A35C2B;
+    border: 1px solid #E09B6140;
+  }
+  .badge-retag i { color: #E09B61; }
+
+  .badge-area-warn {
+    background: #CE11261a;
+    color: #721738;
+    border: 1px solid #CE112640;
+  }
+  .badge-area-warn i { color: #CE1126; }
+
+  .badge-located {
+    background: #059669 1a;
+    color: #047857;
+    border: 1px solid #05966940;
+  }
+
+  /* Contenedor de ubicado-por debajo de la foto */
+  .detail-auditor-card {
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--cd-green-50);
+    border: 1px solid var(--cd-green-100);
+    border-radius: 12px;
+    font-size: 14px;
+  }
+  .detail-auditor-card .auditor-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--cd-green-800);
+    margin-bottom: 4px;
+  }
+  .detail-auditor-card .auditor-name {
+    font-weight: 700;
+    color: var(--cd-green-900);
+    font-size: 15px;
+  }
+}
+
+/* ================================================================
+   BOTONES DE ACCIÓN — Adicionales footer
+   ================================================================ */
+
+@media screen {
+  #ad-det-foto-btn {
+    background-color: #03564B !important;
+    color: white !important;
+  }
+  #ad-det-foto-btn:hover { background-color: #033E3C !important; }
+  #ad-det-edit-btn {
+    background-color: #C48D5C !important;
+    color: white !important;
+  }
+  #ad-det-edit-btn:hover { background-color: #A35C2B !important; }
+}
